@@ -1,8 +1,5 @@
 import { useState } from 'react';
-import {
-  View, Text, TouchableOpacity,
-  StyleSheet, ScrollView, Alert,
-} from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useGroup } from '../hooks/useGroup';
 import { CATEGORIES } from '../utils/categories';
@@ -30,16 +27,13 @@ export default function AddExpenseScreen() {
 
   const toggleSplitPerson = (personId) => {
     setSplitAmong((prev) =>
-      prev.includes(personId)
-        ? prev.filter((id) => id !== personId)
-        : [...prev, personId]
+      prev.includes(personId) ? prev.filter((id) => id !== personId) : [...prev, personId]
     );
   };
 
   const handleSubmit = async () => {
     if (!title.trim()) return Alert.alert('Error', 'Please enter a title.');
-    if (!amount || isNaN(parseFloat(amount)))
-      return Alert.alert('Error', 'Enter a valid amount.');
+    if (!amount || isNaN(parseFloat(amount))) return Alert.alert('Error', 'Enter a valid amount.');
     if (!paidBy) return Alert.alert('Error', 'Select who paid.');
     if (!splitAmong.length)
       return Alert.alert('Error', 'Select at least one person to split among.');
@@ -64,13 +58,22 @@ export default function AddExpenseScreen() {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 60 }}>
-      <Text style={styles.screenTitle}>
-        {isEditing ? 'Edit Expense' : 'New Expense'}
-      </Text>
+      <Text style={styles.screenTitle}>{isEditing ? 'Edit Expense' : 'New Expense'}</Text>
 
       <Card>
-        <Input label="Title" placeholder="e.g. Dinner, Cab..." value={title} onChangeText={setTitle} />
-        <Input label="Amount ($)" placeholder="0.00" value={amount} onChangeText={setAmount} keyboardType="numeric" />
+        <Input
+          label="Title"
+          placeholder="e.g. Dinner, Cab..."
+          value={title}
+          onChangeText={setTitle}
+        />
+        <Input
+          label="Amount ($)"
+          placeholder="0.00"
+          value={amount}
+          onChangeText={setAmount}
+          keyboardType="numeric"
+        />
       </Card>
 
       <Text style={styles.sectionLabel}>Category</Text>
@@ -86,7 +89,9 @@ export default function AddExpenseScreen() {
               onPress={() => setCategory(cat.id)}
             >
               <Text>{cat.icon}</Text>
-              <Text style={[styles.categoryLabel, category === cat.id && styles.categoryLabelSelected]}>
+              <Text
+                style={[styles.categoryLabel, category === cat.id && styles.categoryLabelSelected]}
+              >
                 {cat.label}
               </Text>
             </TouchableOpacity>
@@ -124,9 +129,7 @@ export default function AddExpenseScreen() {
             <TouchableOpacity
               onPress={() =>
                 setSplitAmong(
-                  splitAmong.length === group.people.length
-                    ? []
-                    : group.people.map((p) => p.id)
+                  splitAmong.length === group.people.length ? [] : group.people.map((p) => p.id)
                 )
               }
             >
@@ -141,7 +144,12 @@ export default function AddExpenseScreen() {
                   style={[styles.chip, splitAmong.includes(person.id) && styles.chipSelected]}
                   onPress={() => toggleSplitPerson(person.id)}
                 >
-                  <Text style={[styles.chipText, splitAmong.includes(person.id) && styles.chipTextSelected]}>
+                  <Text
+                    style={[
+                      styles.chipText,
+                      splitAmong.includes(person.id) && styles.chipTextSelected,
+                    ]}
+                  >
                     {person.name}
                   </Text>
                 </TouchableOpacity>
@@ -170,27 +178,50 @@ export default function AddExpenseScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.grayLighter, padding: spacing.lg },
-  screenTitle: { fontSize: typography.xxl, fontWeight: '800', marginBottom: spacing.xl, color: colors.dark },
-  sectionLabel: { fontSize: typography.md, fontWeight: '700', color: '#444', marginBottom: spacing.sm, marginTop: spacing.xs },
+  screenTitle: {
+    fontSize: typography.xxl,
+    fontWeight: '800',
+    marginBottom: spacing.xl,
+    color: colors.dark,
+  },
+  sectionLabel: {
+    fontSize: typography.md,
+    fontWeight: '700',
+    color: '#444',
+    marginBottom: spacing.sm,
+    marginTop: spacing.xs,
+  },
   chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
   chip: {
-    borderWidth: 1.5, borderColor: colors.grayLight, borderRadius: radius.full,
-    paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, backgroundColor: colors.white,
+    borderWidth: 1.5,
+    borderColor: colors.grayLight,
+    borderRadius: radius.full,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.sm,
+    backgroundColor: colors.white,
   },
   chipSelected: { backgroundColor: colors.primary, borderColor: colors.primary },
   chipText: { fontSize: typography.md, color: '#555', fontWeight: '500' },
   chipTextSelected: { color: colors.white, fontWeight: '700' },
   categoryChip: {
-    flexDirection: 'row', alignItems: 'center', gap: spacing.xs,
-    borderWidth: 1.5, borderColor: colors.grayLight, borderRadius: radius.full,
-    paddingHorizontal: spacing.md, paddingVertical: spacing.sm, backgroundColor: colors.white,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    borderWidth: 1.5,
+    borderColor: colors.grayLight,
+    borderRadius: radius.full,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    backgroundColor: colors.white,
   },
   categoryLabel: { fontSize: typography.sm, color: '#555', fontWeight: '500' },
   categoryLabelSelected: { color: colors.white, fontWeight: '700' },
   selectAllText: { color: colors.primary, fontWeight: '600', fontSize: typography.sm },
   splitPreview: {
-    backgroundColor: colors.primaryLight, borderRadius: radius.sm,
-    padding: spacing.md, marginTop: spacing.md,
+    backgroundColor: colors.primaryLight,
+    borderRadius: radius.sm,
+    padding: spacing.md,
+    marginTop: spacing.md,
   },
   splitPreviewText: { color: colors.primary, fontWeight: '600', fontSize: typography.sm },
   noPersonText: { color: colors.gray, fontSize: typography.sm, fontStyle: 'italic' },

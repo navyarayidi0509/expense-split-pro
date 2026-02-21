@@ -30,12 +30,18 @@ export default function Input({
 const styles = StyleSheet.create({
   wrapper: { marginBottom: spacing.md },
   label: {
-    fontSize: typography.md, fontWeight: '700',
-    color: '#444', marginBottom: spacing.sm,
+    fontSize: typography.md,
+    fontWeight: '700',
+    color: '#444',
+    marginBottom: spacing.sm,
   },
   input: {
-    borderWidth: 1.5, borderColor: colors.grayLight,
-    borderRadius: radius.md, padding: spacing.md,
-    backgroundColor: colors.white, fontSize: typography.base, color: colors.dark,
+    borderWidth: 1.5,
+    borderColor: colors.grayLight,
+    borderRadius: radius.md,
+    padding: spacing.md,
+    backgroundColor: colors.white,
+    fontSize: typography.base,
+    color: colors.dark,
   },
 });

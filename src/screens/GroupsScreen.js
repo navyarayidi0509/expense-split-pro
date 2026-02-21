@@ -1,8 +1,5 @@
 import { useState } from 'react';
-import {
-  View, Text, FlatList,
-  TouchableOpacity, StyleSheet, Alert,
-} from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useGroups } from '../hooks/useGroups';
 import Button from '../components/Button';
@@ -46,10 +43,7 @@ export default function GroupsScreen() {
         keyExtractor={(item) => item.id}
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={
-          <EmptyState
-            title="No groups yet"
-            subtitle="Create a group to start splitting expenses"
-          />
+          <EmptyState title="No groups yet" subtitle="Create a group to start splitting expenses" />
         }
         renderItem={({ item }) => (
           <TouchableOpacity
@@ -59,9 +53,7 @@ export default function GroupsScreen() {
           >
             <Card style={styles.groupCard}>
               <View style={styles.groupIconBox}>
-                <Text style={styles.groupIconText}>
-                  {item.name.charAt(0).toUpperCase()}
-                </Text>
+                <Text style={styles.groupIconText}>{item.name.charAt(0).toUpperCase()}</Text>
               </View>
               <View style={styles.groupInfo}>
                 <Text style={styles.groupName}>{item.name}</Text>
@@ -82,14 +74,23 @@ export default function GroupsScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: spacing.lg, backgroundColor: colors.grayLighter },
-  inputRow: { flexDirection: 'row', alignItems: 'flex-end', gap: spacing.sm, marginBottom: spacing.md },
+  inputRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    gap: spacing.sm,
+    marginBottom: spacing.md,
+  },
   inputFlex: { flex: 1, marginBottom: 0 },
   addBtn: { marginBottom: 0, paddingVertical: spacing.md },
   groupCard: { flexDirection: 'row', alignItems: 'center' },
   groupIconBox: {
-    width: 46, height: 46, borderRadius: radius.md,
+    width: 46,
+    height: 46,
+    borderRadius: radius.md,
     backgroundColor: colors.primaryLight,
-    justifyContent: 'center', alignItems: 'center', marginRight: spacing.md,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: spacing.md,
   },
   groupIconText: { fontSize: typography.lg, fontWeight: '800', color: colors.primary },
   groupInfo: { flex: 1 },

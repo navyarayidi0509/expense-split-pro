@@ -9,11 +9,7 @@ const Stack = createNativeStackNavigator();
 export default function AppNavigator() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: true }}>
-      <Stack.Screen
-        name="Groups"
-        component={GroupsScreen}
-        options={{ title: 'My Groups' }}
-      />
+      <Stack.Screen name="Groups" component={GroupsScreen} options={{ title: 'My Groups' }} />
       <Stack.Screen
         name="GroupDetail"
         component={GroupDetailScreen}

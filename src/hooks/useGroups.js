@@ -18,8 +18,7 @@ export const useGroups = () => {
 
   const getGroup = (groupId) => groups.find((g) => g.id === groupId) ?? null;
 
-  const updatedWith = (groupId, updater) =>
-    groups.map((g) => (g.id === groupId ? updater(g) : g));
+  const updatedWith = (groupId, updater) => groups.map((g) => (g.id === groupId ? updater(g) : g));
 
   const persist = async (updated) => {
     await saveGroups(updated);
@@ -62,9 +61,7 @@ export const useGroups = () => {
   const addExpense = async (groupId, expense) => {
     const newExpense = { ...expense, id: uuid.v4(), createdAt: new Date().toISOString() };
     dispatch(addExpenseToGroup({ groupId, expense: newExpense }));
-    await persist(
-      updatedWith(groupId, (g) => ({ ...g, expenses: [...g.expenses, newExpense] }))
-    );
+    await persist(updatedWith(groupId, (g) => ({ ...g, expenses: [...g.expenses, newExpense] })));
   };
 
   const editExpense = async (groupId, expenseId, updates) => {
@@ -72,9 +69,7 @@ export const useGroups = () => {
     await persist(
       updatedWith(groupId, (g) => ({
         ...g,
-        expenses: g.expenses.map((e) =>
-          e.id === expenseId ? { ...e, ...updates } : e
-        ),
+        expenses: g.expenses.map((e) => (e.id === expenseId ? { ...e, ...updates } : e)),
       }))
     );
   };

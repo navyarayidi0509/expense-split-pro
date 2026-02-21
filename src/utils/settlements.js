@@ -23,7 +23,8 @@ export const calculateSettlements = (people, expenses) => {
     if (balance < -0.01) debtors.push({ id, name: person.name, amount: -balance });
   });
 
-  let i = 0, j = 0;
+  let i = 0,
+    j = 0;
   while (i < debtors.length && j < creditors.length) {
     const debtor = debtors[i];
     const creditor = creditors[j];

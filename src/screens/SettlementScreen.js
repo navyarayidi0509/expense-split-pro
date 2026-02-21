@@ -32,19 +32,14 @@ export default function SettlementsScreen() {
     );
   };
 
-  const allSettled =
-    settlements.length === 0 || settlements.every((s) => isAlreadyPaid(s));
+  const allSettled = settlements.length === 0 || settlements.every((s) => isAlreadyPaid(s));
 
   return (
     <View style={styles.container}>
       <Text style={styles.heading}>Who Pays Whom</Text>
 
       {allSettled ? (
-        <EmptyState
-          icon=""
-          title="All settled up!"
-          subtitle="Everyone is even. Nothing to pay."
-        />
+        <EmptyState icon="" title="All settled up!" subtitle="Everyone is even. Nothing to pay." />
       ) : (
         <FlatList
           data={settlements}
@@ -90,9 +85,7 @@ export default function SettlementsScreen() {
                 <Text style={styles.historyText}>
                   {item.from} paid {item.to} ${item.amount.toFixed(2)}
                 </Text>
-                <Text style={styles.historyDate}>
-                  {new Date(item.paidAt).toLocaleDateString()}
-                </Text>
+                <Text style={styles.historyDate}>{new Date(item.paidAt).toLocaleDateString()}</Text>
               </Card>
             )}
           />
@@ -104,10 +97,20 @@ export default function SettlementsScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: spacing.lg, backgroundColor: colors.grayLighter },
-  heading: { fontSize: typography.xl, fontWeight: '800', color: colors.dark, marginBottom: spacing.lg },
+  heading: {
+    fontSize: typography.xl,
+    fontWeight: '800',
+    color: colors.dark,
+    marginBottom: spacing.lg,
+  },
   card: { marginBottom: spacing.sm },
   cardPaid: { backgroundColor: colors.successLight, borderColor: '#86efac', borderWidth: 1 },
-  cardTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing.sm },
+  cardTop: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: spacing.sm,
+  },
   names: { flexDirection: 'row', alignItems: 'center' },
   name: { fontSize: typography.base, fontWeight: '700', color: colors.dark },
   namePaid: { color: '#4ade80' },
@@ -116,13 +119,26 @@ const styles = StyleSheet.create({
   amountPaid: { color: '#4ade80' },
   cardActions: { flexDirection: 'row', justifyContent: 'flex-end' },
   paidBtn: {
-    backgroundColor: colors.primary, borderRadius: radius.sm,
-    paddingHorizontal: spacing.md, paddingVertical: spacing.sm,
+    backgroundColor: colors.primary,
+    borderRadius: radius.sm,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
   },
   paidBtnDone: { backgroundColor: '#4ade80' },
   paidBtnText: { color: colors.white, fontWeight: '700', fontSize: typography.sm },
-  historyTitle: { fontSize: typography.lg, fontWeight: '800', color: colors.dark, marginTop: spacing.xl, marginBottom: spacing.sm },
-  historyCard: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: spacing.md },
+  historyTitle: {
+    fontSize: typography.lg,
+    fontWeight: '800',
+    color: colors.dark,
+    marginTop: spacing.xl,
+    marginBottom: spacing.sm,
+  },
+  historyCard: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: spacing.md,
+  },
   historyText: { fontSize: typography.sm, color: '#555' },
   historyDate: { fontSize: typography.xs, color: colors.gray },
 });

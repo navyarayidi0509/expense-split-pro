@@ -11,7 +11,12 @@ export default function GroupNotFound() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.grayLighter },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: colors.grayLighter,
+  },
   icon: { fontSize: 40, marginBottom: spacing.md },
   text: { fontSize: typography.lg, fontWeight: '700', color: colors.gray },
 });
