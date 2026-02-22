@@ -1,6 +1,7 @@
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { useGroup } from '../hooks/useGroup';
+import { useCurrency } from '../hooks/useCurrency';
 import { calculateSettlements } from '../utils/settlements';
 import Card from '../components/Card';
 import EmptyState from '../components/EmptyState';
@@ -11,6 +12,7 @@ export default function SettlementsScreen() {
   const route = useRoute();
   const { groupId } = route.params;
   const { group, recordSettlementPaid } = useGroup(groupId);
+  const { format } = useCurrency();
 
   if (!group) return <GroupNotFound />;
 
@@ -24,10 +26,13 @@ export default function SettlementsScreen() {
     if (isAlreadyPaid(settlement)) return;
     Alert.alert(
       'Mark as Paid',
-      `${settlement.from} paid ${settlement.to} $${settlement.amount.toFixed(2)}?`,
+      `${settlement.from} paid ${settlement.to} ${format(settlement.amount)}?`,
       [
         { text: 'Cancel' },
-        { text: 'Yes, Paid', onPress: () => recordSettlementPaid(groupId, settlement) },
+        {
+          text: 'Yes, Paid',
+          onPress: () => recordSettlementPaid(groupId, settlement),
+        },
       ]
     );
   };
@@ -39,7 +44,7 @@ export default function SettlementsScreen() {
       <Text style={styles.heading}>Who Pays Whom</Text>
 
       {allSettled ? (
-        <EmptyState icon="" title="All settled up!" subtitle="Everyone is even. Nothing to pay." />
+        <EmptyState title="All settled up!" subtitle="Everyone is even. Nothing to pay." />
       ) : (
         <FlatList
           data={settlements}
@@ -52,11 +57,11 @@ export default function SettlementsScreen() {
                 <View style={styles.cardTop}>
                   <View style={styles.names}>
                     <Text style={[styles.name, paid && styles.namePaid]}>{item.from}</Text>
-                    <Text style={styles.arrow}> → </Text>
+                    <Text style={styles.arrow}> to </Text>
                     <Text style={[styles.name, paid && styles.namePaid]}>{item.to}</Text>
                   </View>
                   <Text style={[styles.amount, paid && styles.amountPaid]}>
-                    ${item.amount.toFixed(2)}
+                    {format(item.amount)}
                   </Text>
                 </View>
                 <View style={styles.cardActions}>
@@ -65,7 +70,7 @@ export default function SettlementsScreen() {
                     onPress={() => handleMarkPaid(item)}
                     disabled={paid}
                   >
-                    <Text style={styles.paidBtnText}>{paid ? '✓ Paid' : 'Mark Paid'}</Text>
+                    <Text style={styles.paidBtnText}>{paid ? 'Paid' : 'Mark Paid'}</Text>
                   </TouchableOpacity>
                 </View>
               </Card>
@@ -83,7 +88,7 @@ export default function SettlementsScreen() {
             renderItem={({ item }) => (
               <Card style={styles.historyCard}>
                 <Text style={styles.historyText}>
-                  {item.from} paid {item.to} ${item.amount.toFixed(2)}
+                  {item.from} paid {item.to} {format(item.amount)}
                 </Text>
                 <Text style={styles.historyDate}>{new Date(item.paidAt).toLocaleDateString()}</Text>
               </Card>
@@ -104,7 +109,11 @@ const styles = StyleSheet.create({
     marginBottom: spacing.lg,
   },
   card: { marginBottom: spacing.sm },
-  cardPaid: { backgroundColor: colors.successLight, borderColor: '#86efac', borderWidth: 1 },
+  cardPaid: {
+    backgroundColor: colors.successLight,
+    borderColor: '#86efac',
+    borderWidth: 1,
+  },
   cardTop: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -114,7 +123,7 @@ const styles = StyleSheet.create({
   names: { flexDirection: 'row', alignItems: 'center' },
   name: { fontSize: typography.base, fontWeight: '700', color: colors.dark },
   namePaid: { color: '#4ade80' },
-  arrow: { fontSize: typography.lg, color: colors.primary, marginHorizontal: spacing.xs },
+  arrow: { fontSize: typography.base, color: colors.gray, marginHorizontal: spacing.xs },
   amount: { fontSize: typography.md, fontWeight: '700', color: colors.success },
   amountPaid: { color: '#4ade80' },
   cardActions: { flexDirection: 'row', justifyContent: 'flex-end' },

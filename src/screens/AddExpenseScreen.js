@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useGroup } from '../hooks/useGroup';
+import { useCurrency } from '../hooks/useCurrency';
 import { CATEGORIES } from '../utils/categories';
 import Button from '../components/Button';
 import Input from '../components/Input';
@@ -14,6 +15,7 @@ export default function AddExpenseScreen() {
   const route = useRoute();
   const { groupId, expense: existingExpense } = route.params;
   const { group, addExpense, editExpense } = useGroup(groupId);
+  const { selectedCurrency, format, convert } = useCurrency();
 
   const isEditing = !!existingExpense;
 
@@ -44,21 +46,25 @@ export default function AddExpenseScreen() {
       paidBy,
       splitAmong,
       category,
+      currency: selectedCurrency,
     };
-
-    const payerName = group.people.find((p) => p.id === paidBy)?.name || 'Someone';
 
     if (isEditing) {
       await editExpense(groupId, existingExpense.id, payload);
     } else {
-      await addExpense(groupId, payload, payerName);
+      await addExpense(groupId, payload);
     }
     navigation.goBack();
   };
 
+  const perPersonAmount =
+    splitAmong.length > 0 && amount && !isNaN(parseFloat(amount))
+      ? parseFloat(amount) / splitAmong.length
+      : null;
+
   return (
     <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 60 }}>
-      <Text style={styles.screenTitle}>{isEditing ? 'Edit Expense' : 'New Expense'}</Text>
+      <Text style={styles.screenTitle}>{isEditing ? '✏ Edit Expense' : '➕ New Expense'}</Text>
 
       <Card>
         <Input
@@ -67,15 +73,24 @@ export default function AddExpenseScreen() {
           value={title}
           onChangeText={setTitle}
         />
-        <Input
-          label="Amount ($)"
-          placeholder="0.00"
-          value={amount}
-          onChangeText={setAmount}
-          keyboardType="numeric"
-        />
+
+        {/* Amount input with currency label */}
+        <Text style={styles.amountLabel}>Amount</Text>
+        <View style={styles.amountRow}>
+          <View style={styles.currencyTag}>
+            <Text style={styles.currencyTagText}>{selectedCurrency}</Text>
+          </View>
+          <Input
+            placeholder="0.00"
+            value={amount}
+            onChangeText={setAmount}
+            keyboardType="numeric"
+            style={styles.amountInput}
+          />
+        </View>
       </Card>
 
+      {/* Category */}
       <Text style={styles.sectionLabel}>Category</Text>
       <Card>
         <View style={styles.chipRow}>
@@ -99,6 +114,7 @@ export default function AddExpenseScreen() {
         </View>
       </Card>
 
+      {/* Paid By */}
       <Text style={styles.sectionLabel}>Paid By</Text>
       <Card>
         {group.people.length === 0 ? (
@@ -120,6 +136,7 @@ export default function AddExpenseScreen() {
         )}
       </Card>
 
+      {/* Split Among */}
       <Text style={styles.sectionLabel}>Split Among</Text>
       <Card>
         {group.people.length === 0 ? (
@@ -137,6 +154,7 @@ export default function AddExpenseScreen() {
                 {splitAmong.length === group.people.length ? 'Deselect All' : 'Select All'}
               </Text>
             </TouchableOpacity>
+
             <View style={[styles.chipRow, { marginTop: spacing.sm }]}>
               {group.people.map((person) => (
                 <TouchableOpacity
@@ -155,11 +173,16 @@ export default function AddExpenseScreen() {
                 </TouchableOpacity>
               ))}
             </View>
-            {splitAmong.length > 0 && amount && !isNaN(parseFloat(amount)) && (
+
+            {/* Split preview with currency conversion */}
+            {perPersonAmount && (
               <View style={styles.splitPreview}>
                 <Text style={styles.splitPreviewText}>
-                  💡 Each person pays: ${(parseFloat(amount) / splitAmong.length).toFixed(2)}
+                  💡 Each person pays: {format(perPersonAmount)}
                 </Text>
+                {selectedCurrency !== 'USD' && (
+                  <Text style={styles.splitPreviewSub}>(${perPersonAmount.toFixed(2)} USD)</Text>
+                )}
               </View>
             )}
           </>
@@ -190,6 +213,35 @@ const styles = StyleSheet.create({
     color: '#444',
     marginBottom: spacing.sm,
     marginTop: spacing.xs,
+  },
+  amountLabel: {
+    fontSize: typography.md,
+    fontWeight: '700',
+    color: '#444',
+    marginBottom: spacing.sm,
+  },
+  amountRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  currencyTag: {
+    backgroundColor: colors.primary,
+    borderRadius: radius.md,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.md,
+    justifyContent: 'center',
+    alignItems: 'center',
+    minWidth: 56,
+  },
+  currencyTagText: {
+    color: colors.white,
+    fontWeight: '800',
+    fontSize: typography.sm,
+  },
+  amountInput: {
+    flex: 1,
+    marginBottom: 0,
   },
   chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
   chip: {
@@ -224,5 +276,6 @@ const styles = StyleSheet.create({
     marginTop: spacing.md,
   },
   splitPreviewText: { color: colors.primary, fontWeight: '600', fontSize: typography.sm },
+  splitPreviewSub: { color: colors.primary, fontSize: typography.xs, marginTop: 2, opacity: 0.7 },
   noPersonText: { color: colors.gray, fontSize: typography.sm, fontStyle: 'italic' },
 });

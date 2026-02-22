@@ -11,6 +11,7 @@ import {
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useGroup } from '../hooks/useGroup';
 import { getCategoryById } from '../utils/categories';
+import { useCurrency } from '../hooks/useCurrency';
 import Button from '../components/Button';
 import Card from '../components/Card';
 import Badge from '../components/Badge';
@@ -24,6 +25,7 @@ export default function GroupDetailScreen() {
   const route = useRoute();
   const { groupId } = route.params;
   const { group, addPerson, removePerson, removeExpense } = useGroup(groupId);
+  const { format } = useCurrency();
   const [personName, setPersonName] = useState('');
 
   if (!group) return <GroupNotFound />;
@@ -39,14 +41,22 @@ export default function GroupDetailScreen() {
   const handleDeletePerson = (personId) => {
     Alert.alert('Remove Person', 'Remove this person from the group?', [
       { text: 'Cancel' },
-      { text: 'Remove', style: 'destructive', onPress: () => removePerson(groupId, personId) },
+      {
+        text: 'Remove',
+        style: 'destructive',
+        onPress: () => removePerson(groupId, personId),
+      },
     ]);
   };
 
   const handleDeleteExpense = (expenseId) => {
     Alert.alert('Delete Expense', 'Delete this expense?', [
       { text: 'Cancel' },
-      { text: 'Delete', style: 'destructive', onPress: () => removeExpense(groupId, expenseId) },
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: () => removeExpense(groupId, expenseId),
+      },
     ]);
   };
 
@@ -61,7 +71,7 @@ export default function GroupDetailScreen() {
         <Text style={styles.summaryTitle}>Group Summary</Text>
         <View style={styles.summaryRow}>
           <View style={styles.summaryItem}>
-            <Text style={styles.summaryValue}>${totalSpent.toFixed(2)}</Text>
+            <Text style={styles.summaryValue}>{format(totalSpent)}</Text>
             <Text style={styles.summaryLabel}>Total Spent</Text>
           </View>
           <View style={styles.summaryDivider} />
@@ -140,19 +150,19 @@ export default function GroupDetailScreen() {
                 </Text>
               </View>
               <View style={styles.expenseRight}>
-                <Text style={styles.expenseAmount}>${item.amount.toFixed(2)}</Text>
+                <Text style={styles.expenseAmount}>{format(item.amount)}</Text>
                 <View style={styles.expenseActions}>
                   <TouchableOpacity
                     style={styles.editBtn}
                     onPress={() => navigation.navigate('AddExpense', { groupId, expense: item })}
                   >
-                    <Text>Edit</Text>
+                    <Text style={styles.editBtnText}>Edit</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={styles.deleteBtn}
                     onPress={() => handleDeleteExpense(item.id)}
                   >
-                    <Text>Delete</Text>
+                    <Text style={styles.deleteBtnText}>Delete</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -187,10 +197,19 @@ const styles = StyleSheet.create({
     marginBottom: 14,
     opacity: 0.85,
   },
-  summaryRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  summaryRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   summaryItem: { flex: 1, alignItems: 'center' },
   summaryValue: { color: colors.white, fontSize: typography.xl, fontWeight: '800' },
-  summaryLabel: { color: colors.white, fontSize: typography.xs, opacity: 0.75, marginTop: 2 },
+  summaryLabel: {
+    color: colors.white,
+    fontSize: typography.xs,
+    opacity: 0.75,
+    marginTop: 2,
+  },
   summaryDivider: { width: 1, height: 36, backgroundColor: 'rgba(255,255,255,0.25)' },
   sectionTitle: {
     fontSize: typography.lg,
@@ -244,8 +263,20 @@ const styles = StyleSheet.create({
   expenseRight: { alignItems: 'flex-end', gap: spacing.sm },
   expenseAmount: { fontSize: typography.lg, fontWeight: '800', color: colors.primary },
   expenseActions: { flexDirection: 'row', gap: spacing.sm },
-  editBtn: { backgroundColor: colors.primaryLight, borderRadius: radius.sm, padding: spacing.sm },
-  deleteBtn: { backgroundColor: colors.dangerLight, borderRadius: radius.sm, padding: spacing.sm },
+  editBtn: {
+    backgroundColor: colors.primaryLight,
+    borderRadius: radius.sm,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+  },
+  editBtnText: { color: colors.primary, fontWeight: '700', fontSize: typography.sm },
+  deleteBtn: {
+    backgroundColor: colors.dangerLight,
+    borderRadius: radius.sm,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+  },
+  deleteBtnText: { color: colors.danger, fontWeight: '700', fontSize: typography.sm },
   emptyPeople: {
     color: colors.gray,
     fontSize: typography.sm,

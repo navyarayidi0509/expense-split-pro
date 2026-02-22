@@ -3,12 +3,20 @@ import GroupsScreen from '../screens/GroupsScreen';
 import GroupDetailScreen from '../screens/GroupDetailScreen';
 import AddExpenseScreen from '../screens/AddExpenseScreen';
 import SettlementsScreen from '../screens/SettlementScreen';
+import CurrencyScreen from '../screens/CurrencyScreen';
 
 const Stack = createNativeStackNavigator();
 
 export default function AppNavigator() {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: true }}>
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: true,
+        headerBackTitle: '',
+        headerBackButtonDisplayMode: 'minimal',
+        headerTitleAlign: 'center',
+      }}
+    >
       <Stack.Screen name="Groups" component={GroupsScreen} options={{ title: 'My Groups' }} />
       <Stack.Screen
         name="GroupDetail"
@@ -24,6 +32,11 @@ export default function AppNavigator() {
         name="Settlements"
         component={SettlementsScreen}
         options={{ title: 'Settlements' }}
+      />
+      <Stack.Screen
+        name="Currency"
+        component={CurrencyScreen}
+        options={{ title: 'Select Currency' }}
       />
     </Stack.Navigator>
   );

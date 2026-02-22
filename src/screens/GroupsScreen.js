@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useLayoutEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useGroups } from '../hooks/useGroups';
+import { useCurrency } from '../hooks/useCurrency';
 import Button from '../components/Button';
 import Input from '../components/Input';
 import Card from '../components/Card';
@@ -11,7 +12,25 @@ import { colors, spacing, typography, radius } from '../theme';
 export default function GroupsScreen() {
   const navigation = useNavigation();
   const { groups, createGroup, removeGroup } = useGroups();
+  const { selectedCurrency, format, loadRates } = useCurrency();
   const [groupName, setGroupName] = useState('');
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Currency')}
+          style={styles.currencyBtn}
+        >
+          <Text style={styles.currencyBtnText}>{selectedCurrency}</Text>
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation, selectedCurrency]);
+
+  useLayoutEffect(() => {
+    loadRates('USD');
+  }, []);
 
   const handleAdd = async () => {
     if (!groupName.trim()) return;
@@ -62,7 +81,7 @@ export default function GroupsScreen() {
                 </Text>
               </View>
               <Text style={styles.totalAmount}>
-                ${item.expenses.reduce((s, e) => s + e.amount, 0).toFixed(2)}
+                {format(item.expenses.reduce((s, e) => s + e.amount, 0))}
               </Text>
             </Card>
           </TouchableOpacity>
@@ -97,4 +116,16 @@ const styles = StyleSheet.create({
   groupName: { fontSize: typography.lg, fontWeight: '700', color: colors.dark },
   groupMeta: { fontSize: typography.sm, color: colors.gray, marginTop: spacing.xs },
   totalAmount: { fontSize: typography.lg, fontWeight: '800', color: colors.primary },
+  currencyBtn: {
+    backgroundColor: colors.primaryLight,
+    borderRadius: radius.full,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+    marginRight: spacing.sm,
+  },
+  currencyBtnText: {
+    color: colors.primary,
+    fontWeight: '700',
+    fontSize: typography.sm,
+  },
 });
